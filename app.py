@@ -7,13 +7,14 @@ st.write("""
 Spaced Repetition System SQL practice
 """)
 
-option = st.selectbox(
-    "What would you like to review?",
-    ("Joins", "GroupBy", "Windows Functions"),
-    index=None,
-    placeholder="Select a theme...", )
+with st.sidebar:
+    option = st.selectbox(
+        "What would you like to review?",
+        ("Joins", "GroupBy", "Windows Functions"),
+        index=None,
+        placeholder="Select a theme...", )
 
-st.write('You selected', option)
+    st.write('You selected', option)
 
 data = {"a": [1, 2, 3], "b": [4, 5, 6]}
 df = pd.DataFrame(data)
@@ -25,5 +26,3 @@ if input_text != "":
     st.write("Voici le resultat de votre requête:")
     query = duckdb.sql(input_text).df()
     st.dataframe(query)
-
-
