@@ -1,7 +1,7 @@
 import duckdb
 
 import streamlit as st
-
+import ast
 
 # solution_df = duckdb.sql(answer_str).df()
 
@@ -10,7 +10,7 @@ con = duckdb.connect(database="data/exercices_sql_tables.duckdb", read_only=Fals
 with st.sidebar:
     theme = st.selectbox(
         "What would you like to review?",
-        ("cross_joins", "GroupBy", "windows functions"),
+        ("cross_joins", "GroupBy", "windows_functions"),
         index=None,
         placeholder="Select a theme...",
     )
@@ -21,9 +21,10 @@ with st.sidebar:
 
 st.header("enter your code:")
 query = st.text_area(label="votre code SQL ici", key="user_input")
-# if query:
-#     result = duckdb.sql(query).df()
-#     st.dataframe(result)
+if query:
+    st.write("Resulat :")
+    result = con.execute(query).df()
+    st.dataframe(result)
 #
 #     try:
 #         columns = result[solution_df.columns]
@@ -38,13 +39,17 @@ query = st.text_area(label="votre code SQL ici", key="user_input")
 #             f"result has a {n_lines_difference} lines differences with the solution_df"
 #         )
 #
-# tab2, tab3 = st.tabs(["Tables", "Solution"])
-# with tab2:
-#     st.write("table: beverages")
-#     st.dataframe(beverages)
-#     st.write("table: food_items")
-#     st.dataframe(food_items)
-#     st.write("expected:")
-#     st.dataframe(solution_df)
-# with tab3:
-#     st.write(answer_str)
+tab2, tab3 = st.tabs(["Tables", "Solution"])
+with tab2:
+
+    exercise_table = ast.literal_eval(exercise.loc[0, "tables"])
+    for table in exercise_table:
+        st.write(f"Table: {table}")
+        df_table = con.execute(f"SELECT * FROM {table}").df()
+        st.write(df_table)
+#
+with tab3:
+    exercise_name = exercise.loc[0, "exercises_name"]
+    with open(f"answers/{exercise_name}.sql", "r") as f:
+        answer = f.read()
+    st.write(answer)
