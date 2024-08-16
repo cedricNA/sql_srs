@@ -1,7 +1,7 @@
 import duckdb
 
 import streamlit as st
-import ast
+
 
 
 con = duckdb.connect(database="data/exercices_sql_tables.duckdb", read_only=False)
@@ -17,7 +17,7 @@ with st.sidebar:
 
     st.write("You selected:", theme)
 
-    exercise = con.execute(f"SELECT * FROM memory_state WHERE theme = '{theme}'").df()
+    exercise = con.execute(f"SELECT * FROM memory_state WHERE theme = '{theme}'").df().sort_values("last_reviewed").reset_index(drop= True)
     st.write(exercise)
 
     exercise_name = exercise.loc[0, "exercises_name"]
@@ -49,7 +49,7 @@ if query:
 tab2, tab3 = st.tabs(["Tables", "Solution"])
 with tab2:
 
-    exercise_table = ast.literal_eval(exercise.loc[0, "tables"])
+    exercise_table = exercise.loc[0, "tables"]
     for table in exercise_table:
         st.write(f"Table: {table}")
         df_table = con.execute(f"SELECT * FROM {table}").df()
