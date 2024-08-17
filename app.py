@@ -21,10 +21,11 @@ if "exercises_sql_tables.duckdb" not in os.listdir("data"):
 con = duckdb.connect(database="data/exercices_sql_tables.duckdb", read_only=False)
 
 with st.sidebar:
+    available_theme_df = con.execute("SELECT DISTINCT theme FROM memory_state").df()
 
     theme = st.selectbox(
         "What would you like to review?",
-        ("cross_joins", "GroupBy", "windows_functions"),
+        available_theme_df["theme"].unique(),
         index=None,
         placeholder="Select a theme...",
     )
